@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sebastian Wines
 
-## Getting Started
+Tienda online de vinos. Catálogo por tipo y varietal, venta por botella y por
+caja de 6, carrito, bodegas y panel de administración.
 
-First, run the development server:
+> **Sebastian Wines no es una bodega**: es una tienda que revende etiquetas de
+> bodegas particulares. Al escribir textos, nunca hablar en primera persona como
+> productor ("nuestra finca", "nuestra cosecha").
+
+## Estado: demostración
+
+El proyecto corre **sin base de datos**, con datos de ejemplo escritos a mano.
+Los 16 vinos, las 6 bodegas, los precios y los datos de contacto del pie de
+página son **inventados**.
+
+Lo que ya funciona:
+
+- Home con foto principal, los 4 tipos de vino, más vendidos, ofertas y destacados
+- Catálogo con filtros por tipo y bodega, buscador y cuatro criterios de orden
+- Ficha de producto con venta por botella o caja de 6 (con descuento mayorista)
+- Carrito con sumar y restar desde las tarjetas, guardado en el navegador
+- Accesorios (sacacorchos, oxigenador, tapones) como venta cruzada
+- 6 bodegas, cada una con su página, y desplegable en el encabezado
+- Panel `/admin` para editar productos, bodegas e imágenes
+
+Lo que falta antes de salir a producción:
+
+- **Checkout y cobro con Mercado Pago** (el botón "Finalizar compra" no hace nada)
+- **Proteger `/admin`**: hoy la ruta es pública y los cambios no se guardan en el
+  servidor, solo en el navegador de quien edita
+- Conectar Supabase y crear las tablas
+- Páginas de envíos, devoluciones, términos y contacto (hoy dan 404)
+
+## Arrancar
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Comandos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando | Para qué sirve |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Compilación de producción |
+| `npx tsc --noEmit` | Verificar tipos |
+| `npm run lint` | Linter |
 
-## Learn More
+## Salir del modo demostración
 
-To learn more about Next.js, take a look at the following resources:
+Copiar `.env.example` a `.env.local` y completar las credenciales de Supabase.
+El chequeo está centralizado en `src/integrations/supabase/config.ts`: **no hay
+que tocar código**, el proyecto detecta las variables y vuelve a usar la base.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Nunca subir el archivo `.env.local` ni las claves de Mercado Pago al repositorio.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Cómo está organizado
 
-## Deploy on Vercel
+```
+src/
+  app/              rutas (App Router)
+    (shop)/         tienda: home, catálogo, bodegas, carrito, accesorios
+    admin/          panel de administración
+  features/         cada dominio con sus componentes, tipos y consultas
+  shared/           componentes compartidos (encabezado, pie, UI)
+  integrations/     clientes de Supabase
+  lib/              utilidades
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Los datos de ejemplo viven en `features/[dominio]/mock-data.ts` y se leen desde
+`queries.ts`. Al conectar Supabase solo cambia el contenido de `queries.ts`;
+ningún componente se entera.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui ·
+Supabase · React Hook Form + Zod · Mercado Pago
+
+## Documentación del proyecto
+
+- [CLAUDE.md](CLAUDE.md) — hoja de ruta, decisiones tomadas y estado actual
+- [ai-pmp/](ai-pmp/) — reglas de código, arquitectura, seguridad y pagos
