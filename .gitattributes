@@ -1,0 +1,21 @@
+# Normaliza los finales de línea al guardar en el repositorio.
+# Sin esto, Windows guarda CRLF y los archivos que corren dentro de Docker
+# (Linux) pueden fallar de formas difíciles de diagnosticar.
+* text=auto eol=lf
+
+# Estos van SIEMPRE con LF: los lee Linux.
+Dockerfile text eol=lf
+captain-definition text eol=lf
+.dockerignore text eol=lf
+*.sh text eol=lf
+
+# Binarios: que Git no los toque.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
